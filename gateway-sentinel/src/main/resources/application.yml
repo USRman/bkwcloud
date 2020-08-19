@@ -1,0 +1,52 @@
+
+spring:
+  cloud:
+    sentinel:
+      # 服务启动直接建立心跳连接
+      eager: true #饥饿加载
+      transport:
+        dashboard: 192.168.0.195:18888
+        port: 18888
+        #scg.fallback为sentinel限流后的响应配置
+      scg:
+        fallback:
+          mode: response
+          response-status: 455
+          response-body: error
+      filter:
+        #sentinel 默认生效，本地调试false
+        enabled: false
+#      datasource:
+#        #sentinel基于nacos储存获取配置信息
+#        na:
+#          nacos:
+#            server-add: 192.168.0.195:8811,192.168.0.195:8812,192.168.0.195:8813,192.168.0.195:8848
+#              groupId:DEFAULT_GROUP
+#              dataId:${srping.appliction.name}-${spring.profiles.active}-sentinel
+              # # 类型
+              #            FLOW("flow", FlowRule.class),
+              #            DEGRADE("degrade", DegradeRule.class),
+              #            PARAM_FLOW("param-flow", ParamFlowRule.class),
+              #            SYSTEM("system", SystemRule.class),
+              #            AUTHORITY("authority", AuthorityRule.class),
+              #            GW_FLOW("gw-flow", "com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule"),
+              #            GW_API_GROUP("gw-api-group", "com.alibaba.csp.sentinel.adapter.gateway.common.api.ApiDefinition");
+#              rule-type: flow
+    gateway:
+      discovery:
+        locator:
+          ###允许通过注册中心获取地址调用，默认是false
+          enabled: true
+          lower-case-service-id: true  #开启后服务名可以小写
+      ###路由策略
+      routes:
+        ###根据我们的服务名称查找地址实现调用
+        - id: gatewaysentinel
+          ####转发feign-member，注册到nacos的服务
+          #uri: lb://feign-member/  lb代表从注册中心获取服务
+          uri: lb://nacos-provider/provider
+          #filters:
+          #- StripPrefix=1  #去掉Path中前n个   请求/name/bar/foo，去除掉前面两个前缀之后，最后转发到目标服务的路径为/foo
+          ###匹配规则
+          predicates:
+            - Path=/provider/**    #/** 的吗、内容不会省略 没有服务依然会报404

@@ -1,0 +1,27 @@
+server:
+  port: 19090
+#nacos 注册中心 管理中心
+spring:
+  application:
+    name: nacosConfig
+  cloud:
+    nacos:
+      config:
+        file-extension: yml
+        group: DEFAULT_GROUP
+        server-addr: 192.168.0.195:8811,192.168.0.195:8812,192.168.0.195:8813,192.168.0.195:8848
+      discovery:
+        server-addr: 192.168.0.195:8811,192.168.0.195:8812,192.168.0.195:8813,192.168.0.195:8848
+        cluster-name: CQ  #地区集群标识
+        metadata:        #元数据标识 版本标识
+           vsersion: v1
+              # 允许调用的提供者版本
+           target-version: V1
+  profiles:
+#    active:  dev 开发环境     test 测试环境
+    active:  test
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'

@@ -1,0 +1,12 @@
+server:
+  port: 18082
+spring:
+  application:
+    name: nacos-provider
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.0.195:8811,192.168.0.195:8812,192.168.0.195:8813,192.168.0.195:8848
+        cluster-name: CQ  #地区集群标识
+        metadata:        #元数据标识 版本标识
+          vsersion: v1
